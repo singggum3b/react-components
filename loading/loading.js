@@ -3,7 +3,8 @@ var Loading = React.createClass({
 	propTypes: {
 		title: React.PropTypes.string,
 		className: React.PropTypes.string,
-		page: React.PropTypes.bool
+		page: React.PropTypes.bool,
+		loadingImage: React.PropTypes.string,
 	},
 	getDefaultProps() {
 		return {
@@ -19,7 +20,7 @@ var Loading = React.createClass({
 		return (
 			<div className={_className}>
 				<div className="wrapper">
-					<img src={require("client/img/not-preloaded/rolling.gif")} alt="Preloader"/>
+					<img src={props.loadingImage} alt="Preloader"/>
 					<p>
 						{props.title}
 					</p>

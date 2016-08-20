@@ -47,11 +47,11 @@ var Carousel = React.createClass({
 
 		var _next = (
 			<span className="next" key="prev" onClick={()=>this.next(true)}>
-					<img src="/img/svg/right1.svg" alt="Next"/>
+					<img src="./img/next.svg" alt="Next"/>
 				</span>);
 		var _prev = (
 			<span className="prev" key="next" onClick={()=>this.prev(true)}>
-					<img src="/img/svg/left1.svg" alt="Prev"/>
+					<img src="./img/prev.svg" alt="Prev"/>
 				</span>);
 
 		var circleList = React.Children.map(props.children, (child, index)=> {

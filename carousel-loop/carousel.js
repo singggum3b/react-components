@@ -46,11 +46,11 @@ var CarouselLoop = React.createClass({
 
 		let _next = (
 			<span className="next" key="next" onClick={()=>this._nextFunc(true)}>
-					<img src={require("client/img/svg/next.svg")} alt="Next"/>
+					<img src={require("../carousel/img/next.svg")} alt="Next"/>
 				</span>);
 		let _prev = (
 			<span className="prev" key="prev" onClick={()=>this._prevFunc(true)}>
-					<img src={require("client/img/svg/prev.svg")} alt="Prev"/>
+					<img src={require("../carousel/img/prev.svg")} alt="Prev"/>
 				</span>);
 
 		let circleList = this.getGroupedItemIndex(props, state).map((group, index)=> {

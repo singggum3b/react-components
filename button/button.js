@@ -1,4 +1,4 @@
-var Layer = require("client/js/components/layer");
+var Layer = require("../layer");
 
 var _mode = ["text", "image", "both"];
 

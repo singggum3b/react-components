@@ -1,10 +1,10 @@
 //====================REACT======================
-var Popup = require('client/js/components/popup');
-var Layer = require('client/js/components/layer');
-var Field = require('client/js/components/field');
-var Button = require('client/js/components/button');
-var Loading = require('client/js/components/loading');
-var MirrorField = require("client/js/components/mirror-field");
+var Popup = require('../popup');
+var Layer = require('../layer');
+var Field = require('../field');
+var Button = require('../button');
+var Loading = require('../loading');
+var MirrorField = require("../mirror-field");
 
 
 var Form = React.createClass({

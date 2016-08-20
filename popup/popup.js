@@ -1,5 +1,5 @@
 var popupCount = 0;
-var Button = require("client/js/components/button");
+var Button = require("../button");
 
 var Popup = React.createClass({
 	displayName: "Popup",
