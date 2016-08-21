@@ -1,9 +1,3 @@
-//==================FLUX=========================
-var Reactor = require("client/js/reactor.js");
-var Media = require("client/js/media");
-
-//===============================================
-
 var Device = React.createClass({
 	displayName: "Device",
 	propTypes: {
@@ -16,7 +10,6 @@ var Device = React.createClass({
 			breakpoint: React.PropTypes.number
 		}))
 	},
-	mixins: [Reactor.ReactMixin],
 	getDataBindings() {
 		return {
 			width: Media.getters.width

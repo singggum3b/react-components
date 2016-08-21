@@ -1,8 +1,3 @@
-//==================FLUX=========================
-var Reactor = require("client/js/reactor.js");
-var Media = require("client/js/media");
-// ============================================
-
 const ChartCore = React.createClass({
 	displayName: "ChartCore",
 	propTypes: {

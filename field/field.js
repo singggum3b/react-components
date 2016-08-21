@@ -1,5 +1,3 @@
-var V = require("client/js/validator");
-
 var Field = React.createClass({
 	displayName: "Field",
 	propTypes: {
@@ -19,7 +17,8 @@ var Field = React.createClass({
 		maxLength: React.PropTypes.number,
 		validateOnMount: React.PropTypes.bool,
 		tabIndex: React.PropTypes.string,
-		htmlType: React.PropTypes.string
+		htmlType: React.PropTypes.string,
+		Validator: React.PropTypes.object,
 	},
 	getDefaultProps() {
 		return {
@@ -74,7 +73,7 @@ var Field = React.createClass({
 			try {
 				_isValid = vld(this.state.activeValue);
 			} catch (e) {
-				_isValid = V[vld.get("type")](this.state.activeValue, vld.toJS());
+				_isValid = this.props.Validator[vld.get("type")](this.state.activeValue, vld.toJS());
 			}
 			return this.props.getValidationMsg(this,vld.toJS(),_isValid);
 
@@ -93,7 +92,7 @@ var Field = React.createClass({
 			try {
 				return !val(state.activeValue);
 			} catch (e) {
-				return !V[val.get("type")](state.activeValue, val.toJS());
+				return !props.Validator[val.get("type")](state.activeValue, val.toJS());
 			}
 
 		}) == -1) : true;

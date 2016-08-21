@@ -174,7 +174,7 @@ var Form = React.createClass({
 		return mdx(type, {
 			'date': ()=> {
 				return (value)=> {
-					return require('client/js/formatter').date(value, {
+					return Formatter.date(value, {
 						inputDateFormat: 'YYYY/M/D',
 						outputDateFormat: 'YYYY/MM/DD'
 					});
