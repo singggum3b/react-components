@@ -1,36 +1,34 @@
-var Loading = React.createClass({
-	displayName: "Loading",
-	propTypes: {
-		title: React.PropTypes.string,
-		className: React.PropTypes.string,
-		page: React.PropTypes.bool,
-		loadingImage: React.PropTypes.string,
-	},
-	getDefaultProps() {
-		return {
-			title: "Loading.."
-		}
-	},
-	buildComponent(props, state) {
-		let _className = cx({
-			"b-loading": true,
-			[props.className]: props.className,
-			"b-loading--page": props.page
-		});
-		return (
-			<div className={_className}>
-				<div className="wrapper">
-					<img src={props.loadingImage} alt="Preloader"/>
-					<p>
-						{props.title}
-					</p>
-				</div>
-			</div>
-		)
-	},
-	render() {
-		return this.buildComponent(this.props, this.state)
-	}
-});
+import classNames from "classnames";
+import { propTypes } from "tcomb-react";
 
-module.exports = Loading;
+export type LoadingPropsType = {
+	title?: string,
+	className?: string,
+	isFullPage?: boolean,
+	loadingImage?: string,
+}
+
+export default function Loading(props) {
+	let _className = classNames({
+		"b-loading": true,
+		[props.className]: props.className,
+		"b-loading--page": props.isFullPage
+	});
+	return (
+		<div className={_className}>
+			<div className="wrapper">
+				{props.loadingImage && <img src={props.loadingImage} alt="Preloader"/>}
+				<p>
+					{props.title}
+				</p>
+			</div>
+		</div>
+	)
+}
+
+Loading.propTypes = propTypes(LoadingPropsType, { strict: false });
+Loading.displayName = "Loading";
+Loading.defaultProps = {
+	title: "Loading.."
+};
+

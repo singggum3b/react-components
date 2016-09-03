@@ -1,3 +1,4 @@
+import classNames from "classnames";
 var Layer = require("../layer");
 
 var _mode = ["text", "image", "both"];
@@ -68,7 +69,7 @@ var Button = React.createClass({
 		this.setState({hover: false});
 	},
 	buildClassName(state, props) {
-		return cx({
+		return classNames({
 			"b-button": true,
 			"active": state.active,
 			"disabled": props.disable,
@@ -76,7 +77,7 @@ var Button = React.createClass({
 		});
 	},
 	buildButton(state, props) {
-		var className = cx({
+		var className = classNames({
 			"button": true,
 			["button--" + props.mode]: true,
 			"is-hover": state.hover
@@ -85,7 +86,7 @@ var Button = React.createClass({
 		var icon = (state.active && props.iconActive) ? props.iconActive : (props.iconHover ? (state.hover ? props.iconHover : props.icon) : props.icon);
 		var target = props.target;
 
-		return mdx(props.mode, {
+		return Utils.match(props.mode, {
 			[_mode[0]]: ()=> {
 				return (
 					<a className={className} href={href} target={target} onClick={this.onClick}

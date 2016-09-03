@@ -1,71 +1,86 @@
-var popupCount = 0;
-var Button = require("../button");
+import classNames from "classnames";
+import {props as p, ReactChildren} from "tcomb-react";
+const Button = require("../button");
 
-var Popup = React.createClass({
-	displayName: "Popup",
-	propTypes: {
-		device: React.PropTypes.string,
-		onClose: React.PropTypes.func,
-		closeIcon: React.PropTypes.string,
-		closeIconHover: React.PropTypes.string,
-		className: React.PropTypes.string,
-		children: React.PropTypes.node
-	},
-	getDefaultProps() {
-		return {
-			device: DEVICE[2],
-			closeIcon: "/img/svg/close.svg",
-			closeIconHover: "/img/svg/close_active.svg"
-		}
-	},
+export type PopupPropsType = {
+	onClose?: Function,
+	closeIcon: string,
+	closeIconHover: string,
+	className?: string,
+	isTouchDevice?: boolean,
+	children: ReactChildren
+}
+
+@p(PopupPropsType,{strict: false})
+export default class Popup extends React.Component {
+
+	static displayName = "Popup";
+
+	static defaultProps = {
+		isTouchDevice: false,
+		closeIcon: require("./close.svg"),
+		closeIconHover: require("./close_active.svg"),
+	};
+
 	componentDidMount() {
-		popupCount++;
 		this.fixBody();
-	},
-	componentDidUpdate() {
+	}
 
-	},
 	componentWillUnmount() {
-		popupCount--;
 		this.unFixBody();
-	},
-	onClose() {
+	}
+
+	onClose = () => {
 		this.unFixBody();
 		this.props.onClose && this.props.onClose();
-	},
-	fixBody() {
-		$("html").css({
+	};
+
+	fixBody = () => {
+		const html = document.querySelector("html");
+		const body = document.querySelector("body");
+		Object.assign(html.style, {
 			height: "100%",
-			overflow: "hidden"
+			overflow: "hidden",
 		});
-		if (this.props.device != DEVICE[2] || $.TOUCH_DEVICE) {
-			this._lastScrollTop = $("body").scrollTop();
-			$.debounce(250, ()=> {
-				$("html").addClass("no-scroll")
-			})();
+
+		if (this.props.isTouchDevice) {
+			this._lastScrollTop = body.scrollTop;
+			setTimeout(function () {
+				html.className += " no-scroll";
+			},250);
 		}
-	},
-	unFixBody() {
-		$("html").css({
+	}
+
+	unFixBody = () => {
+		const html = document.querySelector("html");
+		const body = document.querySelector("body");
+		Object.assign(html.style, {
 			height: "",
-			overflow: ""
-		}).removeClass("no-scroll");
-		$("body").scrollTop(this._lastScrollTop);
-	},
-	render() {
-		var _className = cx({
+			overflow: "",
+		});
+		html.className = html.className.replace(/\bno-scroll\b/,"");
+		body.scrollTop = this._lastScrollTop;
+	}
+
+	buildComponent() {
+		const _className = classNames({
 			[this.props.className]: !!this.props.className,
-			"b-popup": true
+			"b-popup": true,
 		});
 
 		return (
 			<div className={_className}>
-				<Button title="Close" className="close" mode="image" icon={this.props.closeIcon}
-								iconHover={this.props.closeIconHover} onClick={this.onClose}></Button>
+				<Button title="Close" className="close"
+								mode="image" icon={this.props.closeIcon}
+								iconHover={this.props.closeIconHover} onClick={this.onClose}
+				/>
 				{this.props.children}
 			</div>
-		)
+		);
 	}
-});
 
-module.exports = Popup;
+	render() {
+		return this.buildComponent(this.props, this.state);
+	}
+
+}

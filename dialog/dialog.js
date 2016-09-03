@@ -1,5 +1,5 @@
 //====================REACT======================
-var Popup = require("../popup");
+var Popup = require("../popup/popup");
 var Layer = require("../layer");
 var Button = require("../button");
 
