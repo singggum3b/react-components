@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Utils } from "toolbelt";
+import { match } from "toolbelt";
 var Layer = require("../layer");
 
 var _mode = ["text", "image", "both"];
@@ -87,7 +87,7 @@ var Button = React.createClass({
 		var icon = (state.active && props.iconActive) ? props.iconActive : (props.iconHover ? (state.hover ? props.iconHover : props.icon) : props.icon);
 		var target = props.target;
 
-		return Utils.match(props.mode, {
+		return match(props.mode, {
 			[_mode[0]]: ()=> {
 				return (
 					<a className={className} href={href} target={target} onClick={this.onClick}
