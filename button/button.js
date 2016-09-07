@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { Utils } from "toolbelt";
 var Layer = require("../layer");
 
 var _mode = ["text", "image", "both"];
