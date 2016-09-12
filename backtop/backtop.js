@@ -1,17 +1,39 @@
-var Backtop = React.createClass({
-	displayName: "Backtop",
-	propTypes: {
-		children: React.PropTypes.node,
-		className: React.PropTypes.string,
-		icon: React.PropTypes.string.isRequired
-	},
-	getInitialState() {
-		return {
-			isShow: $(window).scrollTop() ? true : false
+import classNames from "classnames";
+import {props as p} from "tcomb-react";
+import "./backtop.styl"
+
+export type PopupPropsType = {
+	className?: string,
+	icon?: string,
+	scrollDuration?: number,
+}
+
+@p(PopupPropsType, {strict: false})
+export default class Backtop extends React.Component {
+	static displayName = "Backtop";
+
+	static defaultProps = {
+		scrollDuration: 1000,
+	};
+
+	constructor() {
+		super();
+		this.state = {
+			isShow: document.body.scrollTop ? true : false
 		}
-	},
-	onScroll(e) {
-		let scrollTop = $(window).scrollTop();
+	}
+
+	componentDidMount() {
+		this.onScroll();
+		window.addEventListener('scroll', this.onScroll);
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('scroll', this.onScroll);
+	}
+
+	onScroll = () => {
+		const scrollTop = document.body.scrollTop;
 		if (scrollTop && !this.state.isShow) {
 			this.setState({
 				isShow: true
@@ -21,30 +43,40 @@ var Backtop = React.createClass({
 				isShow: false
 			})
 		}
-	},
-	backToTop() {
-		$("html, body").animate({scrollTop: 0}, "easeInOut");
-	},
-	componentDidMount() {
-		$(window).on("scroll", this.onScroll);
-	},
-	componentWillUnmount() {
-		$(window).off("scroll", this.onScroll);
-	},
-	buildComponent(props, state) {
-		let _className = cx({
-			"b-backtop": true,
-			[this.props.className]: !!props.className
+	}
+
+	backToTop = () => {
+		// http://stackoverflow.com/questions/21474678/scrolltop-animation-without-jquery
+
+		const scrollDuration = this.props.scrollDuration;
+		let cosParameter = window.scrollY / 2,
+			scrollCount = 0,
+			oldTimestamp = performance.now();
+		function step (newTimestamp) {
+			scrollCount += Math.PI / (scrollDuration / (newTimestamp - oldTimestamp));
+			if (scrollCount >= Math.PI) window.scrollTo(0, 0);
+			if (window.scrollY === 0) return;
+			window.scrollTo(0, Math.round(cosParameter + cosParameter * Math.cos(scrollCount)));
+			oldTimestamp = newTimestamp;
+			window.requestAnimationFrame(step);
+		}
+		window.requestAnimationFrame(step);
+	}
+
+	buildComponent = () => {
+		const _className = classNames({
+			"g-backtop": true,
+			[this.props.className]: !!this.props.className
 		});
-		return state.isShow ? (
+
+		return this.state.isShow ? (
 			<div className={_className} onClick={this.backToTop}>
-				<img src={props.icon} alt="Back top"/>
+				<img src={this.props.icon} alt="Back to top" />
 			</div>
 		) : null
-	},
-	render() {
-		return this.buildComponent(this.props, this.state);
 	}
-});
 
-module.exports = Backtop;
+	render() {
+		return this.buildComponent();
+	}
+}
