@@ -2,18 +2,19 @@ import classNames from "classnames";
 import {props as p} from "tcomb-react";
 import "./backtop.styl"
 
-export type PopupPropsType = {
+export type BackTopPropsType = {
 	className?: string,
 	icon?: string,
 	scrollDuration?: number,
 }
 
-@p(PopupPropsType, {strict: false})
+@p(BackTopPropsType, {strict: false})
 export default class Backtop extends React.Component {
 	static displayName = "Backtop";
 
 	static defaultProps = {
 		scrollDuration: 1000,
+		icon: require("./backtop.svg"),
 	};
 
 	constructor() {
@@ -45,10 +46,10 @@ export default class Backtop extends React.Component {
 		}
 	}
 
-	backToTop = () => {
+	backToTop = (props) => {
 		// http://stackoverflow.com/questions/21474678/scrolltop-animation-without-jquery
 
-		const scrollDuration = this.props.scrollDuration;
+		const scrollDuration = props.scrollDuration;
 		let cosParameter = window.scrollY / 2,
 			scrollCount = 0,
 			oldTimestamp = performance.now();
@@ -63,20 +64,20 @@ export default class Backtop extends React.Component {
 		window.requestAnimationFrame(step);
 	}
 
-	buildComponent = () => {
+	buildComponent = (props) => {
 		const _className = classNames({
 			"g-backtop": true,
-			[this.props.className]: !!this.props.className
+			[props.className]: !!props.className
 		});
 
 		return this.state.isShow ? (
-			<div className={_className} onClick={this.backToTop}>
-				<img src={this.props.icon} alt="Back to top" />
+			<div className={_className} onClick={() => this.backToTop(props)}>
+				<img src={props.icon} alt="Back to top" />
 			</div>
 		) : null
 	}
 
 	render() {
-		return this.buildComponent();
+		return this.buildComponent(this.props);
 	}
 }
