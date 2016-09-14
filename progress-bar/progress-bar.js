@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { propTypes } from "tcomb-react";
-import "./progress.styl";
+import "./progress-bar.styl";
 
 export type ProgressBarPropsType = {
 	className?: string,
@@ -15,9 +15,9 @@ export default function ProgressBar(props) {
 	});
 	let transitionDuration = props.transitionDuration ? props.transitionDuration / 1000 + "s" : 0 + "s";
 	let style = {
-		"width": props.percent + "%",
+		"width": ((props.percent >= 100) ? 100 : props.percent) + "%",
 		"transitionDuration": transitionDuration,
-		"WebkitTransitionDuration": transitionDuration
+		"WebkitTransitionDuration": transitionDuration,
 	};
 	return (
 		<div className={className}>
@@ -29,6 +29,6 @@ export default function ProgressBar(props) {
 ProgressBar.propsType = propTypes(ProgressBarPropsType, { strict: false });
 ProgressBar.displayName = "ProgressBar";
 ProgressBar.defaultProps = {
-	percent: "70",
+	percent: "1",
 	transitionDuration: "2000",
 };
