@@ -1,8 +1,10 @@
+@require "kouto-swiss"
+@require "global"
+
 .g-progress-bar
 	position: relative
-	z-index: 2
 	.bar
-		min-height: 25px;
-		background-color: deepskyblue
+		min-height: $typo.line-height
+		background-color: $color.primary
 		transition: width
 		transition-timing-function: linear
