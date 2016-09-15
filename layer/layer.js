@@ -1,44 +1,52 @@
-var Layer = React.createClass({
-	displayName: "Layer",
-	propTypes: {
-		onClick: React.PropTypes.func,
-		onScroll: React.PropTypes.func,
-		parent: React.PropTypes.bool,
-		onWheel: React.PropTypes.func,
-		className: React.PropTypes.string,
-		style: React.PropTypes.string,
-		children: React.PropTypes.node,
-		allowTouchMove: React.PropTypes.bool
-	},
-	getDefaultProps() {
-		return {
-			allowTouchMove: false
-		}
-	},
-	onClick: function (e) {
-		if (e.target === e.currentTarget) {
-			this.props.onClick && this.props.onClick(e);
-		}
-	},
-	onWheel(e) {
-		this.props.onWheel && this.props.onWheel(e);
-	},
-	render() {
-		var {parent} = this.props;
-		var _className = cx({
-			"b-overlay": true,
-			"b-overlay--parent": !!parent,
-			[this.props.className]: !!this.props.className
-		});
+import classNames from "classnames";
+import { propTypes, ReactNode } from "tcomb-react";
+import "./layer.styl";
 
-		return (
-			<div title="Click to close" className={_className} onWheel={this.onWheel} onClick={this.onClick}
-					 style={this.props.style}
-					 onTouchMove={(e)=>{if (!this.props.allowTouchMove) {e.preventDefault();e.stopPropagation();}}}>
-				{this.props.children}
-			</div>
-		);
+export type LayerPropsType = {
+	onClick?: Function,
+	onScroll?: Function,
+	parent?: boolean,
+	onWheel?: Function,
+	className?: string,
+	children?: ReactNode,
+	allowTouchMove?: boolean,
+}
+
+export default function Layer(props) {
+	const { parent } = props;
+	const _className = classNames({
+		"g-layer": true,
+		"g-layer--parent": !!parent,
+		[props.className]: !!props.className
+	});
+
+	return (
+		<div className={_className} onWheel={onWheel(props)} onClick={onClick(props)}
+			 onTouchMove={onTouchMove}>
+			{props.children}
+		</div>
+	);
+}
+
+const onWheel = (props) => (e) => {
+	props.onWheel && props.onWheel(e);
+};
+
+const onClick = (props) => (e) => {
+	if (e.target === e.currentTarget) {
+		props.onClick && props.onClick(e);
 	}
-});
+};
 
-module.exports = Layer;
+function onTouchMove(e) {
+	if (!props.allowTouchMove) {
+		e.preventDefault();
+		e.stopPropagation();
+	}
+};
+
+Layer.propTypes = propTypes(LayerPropsType, { strict: false });
+Layer.displayName = "Layer";
+Layer.defaultProps = {
+	allowTouchMove: false
+}
