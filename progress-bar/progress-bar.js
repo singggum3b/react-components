@@ -13,7 +13,7 @@ export default function ProgressBar(props) {
 		"g-progress-bar": true,
 		[props.className]: props.className
 	});
-	let transitionDuration = props.transitionDuration ? props.transitionDuration / 1000 + "s" : 0 + "s";
+	let transitionDuration = props.transitionDuration ? `${props.transitionDuration / 1000}s` : `0s`;
 	let style = {
 		"width": ((props.percent >= 100) ? 100 : props.percent) + "%",
 		"transitionDuration": transitionDuration,
@@ -29,6 +29,6 @@ export default function ProgressBar(props) {
 ProgressBar.propsType = propTypes(ProgressBarPropsType, { strict: false });
 ProgressBar.displayName = "ProgressBar";
 ProgressBar.defaultProps = {
-	percent: "1",
+	percent: "0",
 	transitionDuration: "2000",
 };
