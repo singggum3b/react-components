@@ -46,38 +46,42 @@ export default class Backtop extends React.Component {
 		}
 	}
 
-	backToTop = (props) => {
-		// http://stackoverflow.com/questions/21474678/scrolltop-animation-without-jquery
-
-		const scrollDuration = props.scrollDuration;
-		let cosParameter = window.scrollY / 2,
-			scrollCount = 0,
-			oldTimestamp = performance.now();
-		function step (newTimestamp) {
-			scrollCount += Math.PI / (scrollDuration / (newTimestamp - oldTimestamp));
-			if (scrollCount >= Math.PI) window.scrollTo(0, 0);
-			if (window.scrollY === 0) return;
-			window.scrollTo(0, Math.round(cosParameter + cosParameter * Math.cos(scrollCount)));
-			oldTimestamp = newTimestamp;
-			window.requestAnimationFrame(step);
-		}
-		window.requestAnimationFrame(step);
-	}
+	backToTop = () => {
+		window.requestAnimationFrame(step(this.props.scrollDuration));
+	};
 
 	buildComponent = (props) => {
 		const _className = classNames({
 			"g-backtop": true,
+			"showing": this.state.isShow,
 			[props.className]: !!props.className
 		});
 
-		return this.state.isShow ? (
-			<div className={_className} onClick={() => this.backToTop(props)}>
-				<img src={props.icon} alt="Back to top" />
+		return (
+			<div className={_className} onClick={this.backToTop}>
+				<img src={props.icon} alt="Back to top"/>
 			</div>
-		) : null
+		);
 	}
 
 	render() {
 		return this.buildComponent(this.props);
+	}
+}
+
+// http://stackoverflow.com/questions/21474678/scrolltop-animation-without-jquery
+export function step(scrollDuration) {
+	const _this = {};
+	const cosParameter = window.scrollY / 2;
+
+	return function _step(newTimestamp) {
+		_this.scrollCount = _this.scrollCount || 0;
+		_this.oldTimestamp = _this.oldTimestamp || performance.now();
+		_this.scrollCount += Math.PI / (scrollDuration / (newTimestamp - _this.oldTimestamp));
+		if (_this.scrollCount >= Math.PI) window.scrollTo(0, 0);
+		if (window.scrollY === 0) return;
+		window.scrollTo(0, Math.round(cosParameter + cosParameter * Math.cos(_this.scrollCount)));
+		_this.oldTimestamp = newTimestamp;
+		window.requestAnimationFrame(_step);
 	}
 }
