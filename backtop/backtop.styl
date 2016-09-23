@@ -4,5 +4,13 @@
 	right: 40px
 	width: 32px
 	height: 32px
+	visibility: hidden
+	opacity: 0;
+	transition: visibility 0s linear 0.5s, opacity 0.5s linear
 	&:hover
 		cursor: pointer
+
+	&.showing
+		visibility: visible
+		opacity: 1
+		transition-delay: 0s
