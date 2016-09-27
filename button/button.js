@@ -1,159 +1,148 @@
 import classNames from "classnames";
 import { match } from "toolbelt";
-var Layer = require("../layer");
+import { props as p } from "tcomb-react";
+import "./button.styl";
 
-var _mode = ["text", "image", "both"];
+/**
+ * @name Button
+ * @description A generic button, which supports button and button with href.
+ * In term of display, this component supports 3 types: text only, icon only, text & icon
+ * @example
+ * <button mode='both' title='Submit' subtitle='Click here to post this article'
+ * 		   icon='Icon.png' iconHover='IconHover.png' >
+ * </button>
+ */
 
-var Button = React.createClass({
-	displayName: "Button",
-	propTypes: {
-		icon: React.PropTypes.string,
-		iconActive: React.PropTypes.string,
-		iconHover: React.PropTypes.string,
-		title: React.PropTypes.string.isRequired,
-		altTitle: React.PropTypes.string,
-		URL: React.PropTypes.string,
-		placeholder: React.PropTypes.string,
-		list: React.PropTypes.object,
-		active: React.PropTypes.bool,
-		mode: React.PropTypes.oneOf(_mode),
-		childMode: React.PropTypes.oneOf(_mode),
-		onClick: React.PropTypes.func,
-		onKeyUp: React.PropTypes.func,
-		showList: React.PropTypes.bool,
-		target: React.PropTypes.string,
-		preventDefault: React.PropTypes.bool,
-		disable: React.PropTypes.bool,
-		tabIndex: React.PropTypes.string
-	},
-	getDefaultProps() {
-		return {
-			mode: _mode[0],
-			childMode: _mode[0],
-			showList: true,
-			preventDefault: true,
-			tabIndex: "0"
+export type ButtonPropsType = {
+	mode: "text" | "icon" | "both",
+	target?: "_self" | "_blank" | "_parent" | "_top",
+	href?: string,
+	active?: boolean, // set this prop if using toggle
+	disabled?: boolean,
+	tabIndex?: number,
+	title: string,
+	subtitle?: string,
+	icon?: string,
+	iconHover?: string,
+	iconActive?: string,
+	onClick?: Function,
+	className?: string,
+}
+
+@p(ButtonPropsType, {strict: false})
+export default class Button extends React.Component {
+	static displayName = "Button";
+
+	static defaultProps = {
+		mode: "text",
+		disabled: false,
+		tabIndex: 0,
+		subtitle: '',
+	}
+
+	constructor(props) {
+		super(props);
+		this.state = {
+			active: !!props.active,
+			hovering: false,
 		}
-	},
-	getInitialState() {
-		return {
-			active: !!this.props.active,
-			hover: false
-		}
-	},
-	onKeyUp(e) {
-		this.props.onKeyUp && this.props.onKeyUp(e);
-	},
-	setActiveState(isActive) {
-		//console.log(isActive);
-		this.setState({
-			active: isActive
-		});
-	},
+	}
+
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.active !== this.props.active) this.setState({
-			active: nextProps.active
-		});
-	},
-	onClick(e) {
-		if (this.props.disable) return;
-		if (!this.props.URL || !this.props.preventDefault) {
-			if (e.touches && e.touches.length && this.props.preventDefault) e.preventDefault();
-			this.setActiveState(!this.state.active);
+		if (nextProps.active !== this.props.active && typeof this.props.active === "boolean") {
+			this.setState({
+				active: nextProps.active
+			});
+		}
+	}
+
+	onClick = (e) => {
+		if (this.props.disabled) return e.preventDefault();
+		if (!this.props.href && typeof this.props.active === "boolean") {
+			this.setState({ active: !this.state.active });
 			this.props.onClick && this.props.onClick(e);
 		}
-	},
-	onMouseOver(e) {
-		this.setState({hover: true});
-	},
-	onMouseOut(e) {
-		this.setState({hover: false});
-	},
-	buildClassName(state, props) {
-		return classNames({
-			"b-button": true,
-			"active": state.active,
-			"disabled": props.disable,
-			[props.className]: !!props.className
-		});
-	},
-	buildButton(state, props) {
-		var className = classNames({
-			"button": true,
-			["button--" + props.mode]: true,
-			"is-hover": state.hover
-		});
-		var href = (!props.list) ? props.URL : undefined;
-		var icon = (state.active && props.iconActive) ? props.iconActive : (props.iconHover ? (state.hover ? props.iconHover : props.icon) : props.icon);
-		var target = props.target;
+	}
+
+	onMouseOver = () => {
+		!this.props.disabled && this.setState({ hovering: true });
+	}
+
+	onMouseOut = () => {
+		!this.props.disabled && this.setState({ hovering: false });
+	}
+
+	buildButton(props, state) {
+
+		const icon = (state.active && props.iconActive) ? props.iconActive :
+					 ((state.hovering && props.iconHover) ? props.iconHover : props.icon);
 
 		return match(props.mode, {
-			[_mode[0]]: ()=> {
+			"text": () => {
 				return (
-					<a className={className} href={href} target={target} onClick={this.onClick}
-						 tabIndex={props.tabIndex} onKeyUp={props.onKeyUp}
-						 onMouseEnter={this.onMouseOver} onMouseLeave={this.onMouseOut}>
-						<span className="title" dangerouslySetInnerHTML={{__html: props.title}}></span>
-						{!!props.altTitle && <span className="alt-title">{props.altTitle}</span>}
-					</a>
+					<span className="label-wrapper">
+						<span className="label">{props.title}</span>
+						{!!props.subtitle && <span className="sub-label">{props.subtitle}</span>}
+					</span>
 				)
 			},
-			[_mode[1]]: ()=> {
+			"icon": () => {
 				return (
-					<a className={className} href={href} target={target} onClick={this.onClick} onTouchStart={this.onClick}
-						 onMouseEnter={this.onMouseOver} onMouseLeave={this.onMouseOut}>
-						<div className="icon-wrapper">
-							<img className="icon" src={icon} alt={props.URL || "Icon"}/>
-						</div>
-					</a>
+					<span className="icon-wrapper">
+						<img className="icon" src={icon} alt="Icon" />
+					</span>
 				)
 			},
-			[_mode[2]]: ()=> {
-				return (
-					<a className={className} href={href} target={target} onClick={this.onClick} onTouchStart={this.onClick}
-						 onMouseEnter={this.onMouseOver} onMouseLeave={this.onMouseOut}>
-							<span className="icon-wrapper">
-								<img className="icon" src={icon} alt={props.URL || "Icon"}/>
-							</span>
-							<span className="title-wrapper">
-								<span className="title" dangerouslySetInnerHTML={{__html: props.title}}></span>
-								{!!props.altTitle && <span className="alt-title">{props.altTitle}</span>}
-							</span>
-					</a>
-				)
+			"both": () => {
+				return [
+					<span key="icon-wrapper" className="icon-wrapper">
+						<img className="icon" src={props.icon} alt="Icon" />
+					</span>,
+					<span key="label-wrapper" className="label-wrapper">
+						<span className="label">{props.title}</span>
+						{!!props.subtitle && <span className="sub-label">{props.subtitle}</span>}
+					</span>
+				]
 			}
 		})
-	},
-	buildChildList(state, props) {
-		//console.log(props.list, state.active , props.showList);
-		return (props.list && state.active && props.showList) && (
-				<div className="button-list">
-					{props.list.map((value, index)=> {
-						return (
-							<Button key={index} {...value.toObject()}
-											mode={props.childMode ? props.childMode : props.mode}></Button>
-						)
-					})}
-				</div>
-			)
-	},
-	buildLayer(state, props) {
-		return (state.active && !!props.list && props.showList) && (
-				<Layer onClick={()=>{
-						this.setActiveState(false);
-						props.onClick && props.onClick();
-						}} allowTouchMove={!props.preventDefault}></Layer>
-			)
-	},
-	render() {
-		return (
-			<div className={this.buildClassName(this.state,this.props)}>
-				{this.buildLayer(this.state, this.props)}
-				{this.buildButton(this.state, this.props)}
-				{this.buildChildList(this.state, this.props)}
-			</div>
-		)
 	}
-});
 
-module.exports = Button;
+	buildComponent(props, state) {
+		const _buttonClasses = classNames({
+			"g-button": true,
+			"g-button--link": !!props.href,
+			"g-button--icon": !!props.icon,
+			"active": state.active,
+			"hovering": state.hovering,
+			"disabled": props.disabled,
+			[props.className]: !!props.className,
+		});
+
+		const newProps = {
+			className: _buttonClasses,
+			href: props.href,
+			target: props.target,
+			title: props.title,
+			onClick: this.onClick,
+			onTouchStart: this.onClick,
+			onMouseEnter: this.onMouseOver,
+			onMouseLeave: this.onMouseOut,
+		};
+
+		const button = !!props.href ? (
+			<a {...newProps}>
+				{this.buildButton(props, state)}
+			</a>
+		) : (
+			<button {...newProps}>
+				{this.buildButton(props, state)}
+			</button>
+		);
+
+		return button;
+	}
+
+	render() {
+		return this.buildComponent(this.props, this.state);
+	}
+}
