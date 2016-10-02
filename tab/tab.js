@@ -1,4 +1,4 @@
-var Layer = require("../layer");
+var Layer = require("../layer/layer");
 
 var _mode = ["tab", "menu"];
 

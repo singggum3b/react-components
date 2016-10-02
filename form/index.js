@@ -1,8 +1,8 @@
 //====================REACT======================
 var Popup = require('../popup/popup');
-var Layer = require('../layer');
+var Layer = require('../layer/layer');
 var Field = require('../field');
-var Button = require('../button');
+var Button = require('../button/button');
 var Loading = require('../loading/loading');
 var MirrorField = require("../mirror-field");
 
