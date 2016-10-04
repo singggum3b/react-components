@@ -1,0 +1,36 @@
+@require "kouto-swiss"
+@require "global"
+.g-button
+	display: inline-block
+	color: $color.font-default
+	background-color: $color.background-default-dim
+	padding: $layout.padding
+	border: 1px solid $color.border
+	text-decoration: none
+	outline: 0
+	&.hovering:not(.disabled):not(.active):hover
+		background-color: darken(@background-color, 10%)
+	&.disabled
+		cursor: initial
+		color: graytext
+		background-color: darken(@background-color, 10%)
+	&.active
+		background-color: darken(@background-color, 10%)
+
+	.label-wrapper
+		float: left
+		.label
+			display: block
+		.sub-label
+			font-size: golden-ratio(1em, -0.5)
+
+	&.g-button--icon
+		.label-wrapper
+			padding-left: $layout.padding
+
+		.icon-wrapper
+			float: left
+			line-height: 0
+			width: golden-ratio(2em, 1)
+			.icon
+				width: 100%

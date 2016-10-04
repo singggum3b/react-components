@@ -1,4 +1,4 @@
-var ProgressBar = require("../progress");
+var ProgressBar = require("../progress-bar/progress-bar");
 var Swipeable = require("react-swipeable");
 
 var CarouselLoop = React.createClass({
