@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import {props as p, ReactChildren} from "tcomb-react";
-const Button = require("../button");
+const Button = require("../button/button");
 
 export type PopupPropsType = {
 	onClose?: Function,
