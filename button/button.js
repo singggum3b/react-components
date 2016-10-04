@@ -45,13 +45,15 @@ export default class Button extends React.Component {
 		this.state = {
 			active: !!props.active,
 			hovering: false,
-		}
+		};
+		if (props.href && props.onClick)
+			throw new Error("Button cannot have both href and onClick props");
 	}
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.active !== this.props.active && typeof this.props.active === "boolean") {
 			this.setState({
-				active: nextProps.active
+				active: nextProps.active,
 			});
 		}
 	}
@@ -60,9 +62,9 @@ export default class Button extends React.Component {
 		if (this.props.disabled) return e.preventDefault();
 		if (!this.props.href && typeof this.props.active === "boolean") {
 			this.setState({ active: !this.state.active });
-			this.props.onClick && this.props.onClick(e);
 		}
-	}
+		this.props.onClick && this.props.onClick(e);
+	};
 
 	onMouseOver = () => {
 		!this.props.disabled && this.setState({ hovering: true });
@@ -129,17 +131,15 @@ export default class Button extends React.Component {
 			onMouseLeave: this.onMouseOut,
 		};
 
-		const button = !!props.href ? (
-			<a {...newProps}>
-				{this.buildButton(props, state)}
-			</a>
-		) : (
+		return !props.href ? (
 			<button {...newProps}>
 				{this.buildButton(props, state)}
 			</button>
+		) : (
+			<a {...newProps}>
+				{this.buildButton(props, state)}
+			</a>
 		);
-
-		return button;
 	}
 
 	render() {
