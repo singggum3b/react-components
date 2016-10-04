@@ -15,7 +15,7 @@ export type LayerPropsType = {
 export default function Layer(props) {
 	const { parent } = props;
 	const _className = classNames({
-		"g-layer": true,
+		[Layer.displayName]: true,
 		"g-layer--parent": !!parent,
 		[props.className]: !!props.className
 	});
@@ -46,7 +46,7 @@ function onTouchMove(e) {
 };
 
 Layer.propTypes = propTypes(LayerPropsType, { strict: false });
-Layer.displayName = "Layer";
+Layer.displayName = "g-layer";
 Layer.defaultProps = {
 	allowTouchMove: false
 }

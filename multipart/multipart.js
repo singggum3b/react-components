@@ -1,5 +1,12 @@
 import classNames from "classnames";
-import { props as p } from "tcomb-react";
+import { propTypes } from "tcomb-react";
+
+/**
+ * @name Multipart
+ * @description A component, which takes multiple components and choose which component need to show
+ * @example
+ * <Multipart activePart={activePart} partMap={this.buildPartMap(props, state)} />
+ */
 
 export type MultipartPropsType = {
 	className?: string,
@@ -9,32 +16,18 @@ export type MultipartPropsType = {
 	activePart: Array<string>
 }
 
-@p(MultipartPropsType, {strict: false})
-export default class Multipart extends React.Component {
-	static displayName = "Multipart";
+export default function Multipart(props) {
+	const cls = classNames(Multipart.displayName, {
+		[props.className]: !!props.className,
+	});
 
-	static defaultProps = {};
-
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
-
-	buildComponent(props) {
-		const cls = classNames("g-multipart", {
-			[props.className]: !!props.className,
-		});
-
-		return (
-			<div className={cls}>
-				{
-					props.activePart.map((key) => (props.partMap[key]()))
-				}
-			</div>
-		);
-	}
-
-	render() {
-		return this.buildComponent(this.props);
-	}
+	return (
+		<div className={cls}>
+			{
+				props.activePart.map((key) => (props.partMap[key]()))
+			}
+		</div>
+	);
 }
+Multipart.propTypes = propTypes(MultipartPropsType, { strict: false });
+Multipart.displayName = "g-multipart";

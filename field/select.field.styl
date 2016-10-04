@@ -1,0 +1,22 @@
+@require "kouto-swiss"
+@require "global"
+.g-dropdown-list
+	.dropdown-item
+		padding: $layout.padding
+		color: $color.font-default
+		background-color: $color.background-default-dim
+		border: 1px solid $color.border
+		outline: 0
+		cursor: pointer
+		&.hovering:not(.disabled):not(.selected):hover
+			background-color: darken(@background-color, 10%)
+		&.disabled
+			cursor: initial
+			color: graytext
+			background-color: darken(@background-color, 10%)
+		&.selected
+			color: $color.font-invert
+			background-color: $color.primary
+
+		.checkbox
+			display: none

@@ -1,7 +1,7 @@
 //====================REACT======================
 var Popup = require('../popup/popup');
 var Layer = require('../layer/layer');
-var Field = require('../field');
+var Field = require('../field/field');
 var Button = require('../button/button');
 var Loading = require('../loading/loading');
 

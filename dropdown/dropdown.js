@@ -2,7 +2,15 @@ import classNames from "classnames";
 import { props as p } from "tcomb-react";
 import Multipart from "../multipart/multipart";
 
+/**
+ * @name Dropdown
+ * @description
+ * @example
+ * <Dropdown buildHead={this.buildHead} buildBody={this.buildBody} expanded={state.expanded} />
+ */
+
 export type DropdownPropsType = {
+	name?: string,
 	className?: string,
 	expanded: boolean,
 	buildHead: Function,
@@ -36,7 +44,7 @@ export default class Dropdown extends React.Component {
 		});
 	}
 
-	colllapse() {
+	collapse() {
 		this.setState({
 			expanded: false,
 		});
@@ -58,27 +66,29 @@ export default class Dropdown extends React.Component {
 		);
 	};
 
-	buildPartMap(props,state) {
+	buildPartMap(props, state) {
 		return {
 			head: this.buildHead,
 			body: this.buildBody,
 		};
 	}
 
-	buildComponent(props,state) {
+	buildComponent(props, state) {
 		const cls = classNames("g-dropdown", {
 			[props.className]: !!props.className,
 		});
-		const activePart = state.expanded ? ["head","body"] : ["head"];
+		const activePart = state.expanded ? ["head", "body"] : ["head"];
 
 		return (
-			<Multipart className={cls}
-								 activePart={activePart}
-								 partMap={this.buildPartMap(props,state)} />
+			<Multipart
+				className={cls}
+				activePart={activePart}
+				partMap={this.buildPartMap(props, state)}
+			/>
 		);
 	}
 
 	render() {
-		return this.buildComponent(this.props,this.state);
+		return this.buildComponent(this.props, this.state);
 	}
 }
