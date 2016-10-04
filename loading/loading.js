@@ -9,7 +9,7 @@ export type LoadingPropsType = {
 }
 
 export default function Loading(props) {
-	let _className = classNames({
+	const _className = classNames({
 		"b-loading": true,
 		[props.className]: props.className,
 		"b-loading--page": props.isFullPage

@@ -21,8 +21,12 @@ export default function Layer(props) {
 	});
 
 	return (
-		<div className={_className} onWheel={onWheel(props)} onClick={onClick(props)}
-			 onTouchMove={onTouchMove}>
+		<div
+			className={_className}
+			onWheel={onWheel(props)}
+			onClick={onClick(props)}
+			onTouchMove={onTouchMove}
+		>
 			{props.children}
 		</div>
 	);
@@ -48,5 +52,6 @@ function onTouchMove(e) {
 Layer.propTypes = propTypes(LayerPropsType, { strict: false });
 Layer.displayName = "Layer";
 Layer.defaultProps = {
-	allowTouchMove: false
+	parent: false,
+	allowTouchMove: false,
 }
