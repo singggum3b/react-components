@@ -3,11 +3,15 @@ import { props as p } from "tcomb-react";
 import Dropdown from "../dropdown/dropdown";
 import List from "../list/list";
 
+import "./dropdown-list.styl";
+
 export type DropdownListPropsType = {
 	type: Function,
 	className?: string,
 	expanded?: boolean,
-	activeKey: string,
+	defaultExpanded: boolean,
+	activeKey?: string,
+	defaultKey?: string,
 	onClickItem?: Function,
 	itemList: Array<{key: string}>
 }
@@ -16,34 +20,69 @@ export type DropdownListPropsType = {
 export default class DropdownList extends React.Component {
 	static displayName = "DropdownList";
 
-	static defaultProps = {};
+	static defaultProps = {
+		defaultExpanded: false,
+	};
 
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			activeKey: props.activeKey || props.defaultKey || props.itemList[0].key,
+			expanded: typeof props.expanded === "boolean" ? props.expanded : props.defaultExpanded,
+		};
 	}
 
 	onClickItem = (itemProps, activeKey) => {
-		console.log(itemProps);
 		return () => {
-			console.log(itemProps);
+			!this.props.activeKey && this.setState({
+				activeKey: itemProps.key,
+			});
+
+			if (itemProps.key === activeKey) {
+				this.setState({
+					expanded: !this.state.expanded,
+				});
+			} else {
+				this.setState({
+					expanded: false,
+				});
+			}
+
 			this.props.onClickItem(itemProps, activeKey);
 		};
 	};
 
 	buildHead = (dropdownInstance) => {
-		const {activeKey, itemList} = this.props;
+		const {itemList} = this.props;
 		const ItemClass = this.props.type;
-		const itemProps = itemList.find((item) => activeKey === item.key);
-		return <ItemClass {...itemProps} onClick={this.onClickItem(itemProps, activeKey)} />;
+		const itemProps = itemList.find((item) => this.state.activeKey === item.key);
+		const cls = classNames("dropdown-item", {
+			[itemProps.className]: !!itemProps.className,
+		});
+		return (
+			<ItemClass
+				{...itemProps}
+				className={cls}
+				onClick={this.onClickItem(itemProps, this.state.activeKey)} />
+		);
 	};
 
 	buildBody = (dropdownInstance) => {
-		const {activeKey, itemList} = this.props;
+		const { itemList } = this.props;
+		const filteredItemList = itemList.filter((item) => this.state.activeKey !== item.key);
+		return <List list={filteredItemList} buildItem={this.buildBodyItem} />;
+	};
+
+	buildBodyItem = (itemProps) => {
 		const ItemClass = this.props.type;
-		const filteredItemList = this.props.itemList.filter((item) => activeKey !== item.key);
-		return filteredItemList.map((item) =>
-			<ItemClass {...item} onClick={this.onClickItem(item, activeKey)} />
+		const cls = classNames("dropdown-item", {
+			[itemProps.className]: !!itemProps.className,
+		});
+		return (
+			<ItemClass
+				{...itemProps}
+				className={cls}
+				onClick={this.onClickItem(itemProps, this.state.activeKey)} />
 		);
 	};
 
@@ -54,19 +93,32 @@ export default class DropdownList extends React.Component {
 		};
 	}
 
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.activeKey !== this.props.activeKey) {
+			this.setState({
+				activeKey: nextProps.activeKey,
+			});
+		}
+		if (nextProps.expanded !== this.props.expanded) {
+			this.setState({
+				expanded: nextProps.expanded,
+			});
+		}
+	}
+
 	buildComponent(props,state) {
-		const cls = classNames("g-dropdown", {
+		const cls = classNames("g-dropdown-list", {
 			[props.className]: !!props.className,
 		});
 
 		return (
-			<Dropdown buildHead={this.buildHead}
+			<Dropdown className={cls} buildHead={this.buildHead}
 								buildBody={this.buildBody}
-								expanded={!!props.expanded} />
+								expanded={state.expanded} />
 		);
 	}
 
 	render() {
-		return this.buildComponent(this.props);
+		return this.buildComponent(this.props, this.state);
 	}
 }

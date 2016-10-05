@@ -22,6 +22,14 @@ export default class Dropdown extends React.Component {
 		};
 	}
 
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.expanded !== this.props.expanded) {
+			this.setState({
+				expanded: nextProps.expanded,
+			});
+		}
+	}
+
 	expand() {
 		this.setState({
 			expanded: true,
@@ -36,7 +44,7 @@ export default class Dropdown extends React.Component {
 
 	buildHead=() => {
 		return (
-			<div key="head" className="head">
+			<div key="dropdown-head" className="dropdown-head">
 				{this.props.buildHead(this)}
 			</div>
 		);
@@ -44,7 +52,7 @@ export default class Dropdown extends React.Component {
 
 	buildBody=() => {
 		return (
-			<div key="body" className="body">
+			<div key="dropdown-body" className="dropdown-body">
 				{this.props.buildBody(this)}
 			</div>
 		);
