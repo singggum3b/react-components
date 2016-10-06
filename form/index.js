@@ -4,8 +4,6 @@ var Layer = require('../layer/layer');
 var Field = require('../field');
 var Button = require('../button/button');
 var Loading = require('../loading/loading');
-var MirrorField = require("../mirror-field");
-
 
 var Form = React.createClass({
 	propTypes: {
@@ -228,25 +226,13 @@ var Form = React.createClass({
 					<fieldset className={"fieldset-"+index} key={"fieldset-"+index}>
 						{
 							fieldGroup.map((field, index)=> {
-								return mdx(field.get('type'), {
-									"mirrorfield": ()=> {
-										return <MirrorField key={'field' + field.get('id')}
-																				ref={'field' + field.get('id')}
-																				validateOnMount={state.validateOnMount}
-																				formatter={this.formatAs(field.get('type'))}
-																				onChange={this.onChange}
-																				onKeyUp={this.submitByKey}
-																				className="b-field-block" {...field.toObject()} />
-									}
-								}, ()=> {
-									return <Field key={'field' + field.get('id')}
-																ref={'field' + field.get('id')}
-																validateOnMount={state.validateOnMount}
-																formatter={this.formatAs(field.get('type'))}
-																onKeyUp={this.submitByKey}
-																onChange={this.onChange}
-																className="b-field-block" {...field.toObject()} />;
-								});
+								return <Field key={'field' + field.get('id')}
+															ref={'field' + field.get('id')}
+															validateOnMount={state.validateOnMount}
+															formatter={this.formatAs(field.get('type'))}
+															onKeyUp={this.submitByKey}
+															onChange={this.onChange}
+															className="b-field-block" {...field.toObject()} />;
 							})
 						}
 					</fieldset>
