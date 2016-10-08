@@ -69,7 +69,10 @@ export default class Backtop extends React.Component {
 	}
 }
 
-// http://stackoverflow.com/questions/21474678/scrolltop-animation-without-jquery
+/**
+ * @description: change the speed of backTop button
+ * Reference: http://stackoverflow.com/questions/21474678/scrolltop-animation-without-jquery
+ */
 export function step(scrollDuration) {
 	const _this = {};
 	const cosParameter = window.scrollY / 2;

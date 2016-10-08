@@ -1,4 +1,4 @@
-var Field = require("../field");
+var Field = require("../field/field");
 
 var MirrorField = React.createClass({
 	displayName: "MirrorField",

@@ -66,11 +66,11 @@ export default class Button extends React.Component {
 		this.props.onClick && this.props.onClick(e);
 	};
 
-	onMouseOver = () => {
+	onMouseEnter = () => {
 		!this.props.disabled && this.setState({ hovering: true });
 	}
 
-	onMouseOut = () => {
+	onMouseLeave = () => {
 		!this.props.disabled && this.setState({ hovering: false });
 	}
 
@@ -127,8 +127,8 @@ export default class Button extends React.Component {
 			title: props.title,
 			onClick: this.onClick,
 			onTouchStart: this.onClick,
-			onMouseEnter: this.onMouseOver,
-			onMouseLeave: this.onMouseOut,
+			onMouseEnter: this.onMouseEnter,
+			onMouseLeave: this.onMouseLeave,
 		};
 
 		return !props.href ? (
