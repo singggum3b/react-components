@@ -42,7 +42,7 @@ export default function TextField(props) {
 	);
 }
 
-TextField.propsType = propTypes(TextFieldPropsType, { strict: false });
+TextField.propTypes = propTypes(TextFieldPropsType, { strict: false });
 TextField.displayName = "TextField";
 TextField.defaultProps = {
 	activeValue: '',

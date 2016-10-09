@@ -38,7 +38,7 @@ export default function FileField(props) {
 	);
 }
 
-FileField.propsType = propTypes(FileFieldPropsType, { strict: false });
+FileField.propTypes = propTypes(FileFieldPropsType, { strict: false });
 FileField.displayName = "CheckboxField";
 FileField.defaultProps = {
 	fileInputKey: Date.now(), // reset field after submitting

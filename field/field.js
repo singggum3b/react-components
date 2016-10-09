@@ -10,9 +10,10 @@ import SelectField from "./select.field";
 
 export type FieldPropsType = {
 	type: "text" | "radio" | "date" | "select" | "textarea" | "label" | "checkbox" | "ckeditor" | "file",
-	value: string | Array<{[key:string] : any}>,
+	value?: string | Array<string>,
+	optionList?: Array<{key: string, value: string}>,
 	defaultValue?: string | Array<string>,
-	name?: string,
+	name: string,
 	className?: string,
 	label?: string,
 	validation?: {[key:string]: any},
@@ -25,7 +26,7 @@ export type FieldPropsType = {
 	// Using to store all HTML Attributes of input tag
 	// http://www.w3schools.com/tags/tag_input.asp
 	htmlProps?: {[key:string] : any},
-	//***
+	// ***
 	formatter?: Function,
 	validator?: {[key:string]: any}
 }
@@ -41,13 +42,34 @@ export default class Field extends React.Component {
 		multipleChoice: false,
 		validateOnMount: false,
 		htmlProps: {},
+	};
+
+	static errorCheck(props) {
+		[].some((type) => {
+			if (type === props.type && !props.optionList) {
+				throw new Error(`Field type [${type}] require optionList`);
+			}
+			return false;
+		});
+
+		if (((props.value || props.value === "") && (props.defaultValue || props.defaultValue === ""))) {
+			throw new Error(`Field name [${props.name}] cannot have value and defaultValue set at the same time`);
+		}
+
+		if ((!props.value && props.value !== "") && (!props.defaultValue && props.defaultValue !== "")) {
+			throw new Error(`Field name [${props.name}] must have one of value or defaultValue set`);
+		}
+
+		if (props.value) console.info(`Field name [${props.name}] in controlled mode`);
+		if (props.defaultValue || props.defaultValue === "") console.info(`Field name [${props.name}] in uncontrolled mode`);
 	}
 
 	constructor(props) {
 		super(props);
+		Field.errorCheck(props);
 		this.state = {
 			// if props.value is array
-			activeValue: (this.props.value && Array.isArray(this.props.value)) ? this.props.defaultValue : this.props.value,
+			activeValue: props.defaultValue || props.value || "",
 			// validated: !(this.props.validation && (this.props.validation.size > 0)) || (!this.props.required && !(this.props.value && this.props.value.length)),
 			edited: false,
 		}
@@ -84,25 +106,42 @@ export default class Field extends React.Component {
 	}
 
 	onChange = (e) => {
-		const _activeValue = match(e.target.type, {
-			"checkbox": ()=> {
-				return !e.target.checked ? this.state.activeValue.filter(item => item !== e.target.value) :
-					this.state.activeValue ? this.state.activeValue.concat(e.target.value) : [e.target.value]
+		const {activeValue} = this.state;
+		const newValue = e.target.value;
+		const _activeValue = match(this.props.type, {
+
+			checkbox: () => {
+				if (e.target.checked) {
+					if (activeValue.includes(newValue)) return activeValue;
+					return activeValue.concat([newValue]);
+				}
+				return activeValue.filter((val) => val !== newValue);
 			},
-			"select": ()=> {
-				return !e.target.checked ? this.state.activeValue.filter(item => item !== e.target.value) :
-					this.state.activeValue ? this.state.activeValue.concat(e.target.value) : [e.target.value]
+
+			select: () => {
+				if (this.props.multiple) {
+
+					if (e.target.checked) {
+						if (activeValue.includes(newValue)) return activeValue;
+						return activeValue.concat([newValue]);
+					}
+					return activeValue.filter((val) => val !== newValue);
+				}
+				return e.target.value;
 			},
-			"file": ()=> {
+
+			file: () => {
 				return e.target.files;
 			},
-		}, ()=> {
+		}, () => {
 			return e.target.value;
 		});
+
+
 		this.setState({
 			activeValue: _activeValue,
-		})
-	}
+		});
+	};
 
 	onKeyUp = (e) => {
 		this.props.onKeyUp && this.props.onKeyUp(e);
@@ -116,13 +155,13 @@ export default class Field extends React.Component {
 			"is-invalid": !props.validated,
 			"is-edited": props.edited,
 			["g-field-"+props.type]: !!props.type,
-			[props.className]: !!props.className
+			[props.className]: !!props.className,
 		});
 		const newProps = Object.assign({}, props, {
 			onChange: this.onChange,
 			onKeyUp: this.onKeyUp,
 			validated: state.validated,   // ?????
-			activeValue: state.activeValue,
+			value: state.activeValue,
 			edited: state.edited,
 			className: _className,
 		});

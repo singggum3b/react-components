@@ -14,7 +14,7 @@ export default function LabelField(props) {
 	);
 }
 
-LabelField.propsType = propTypes(LabelFieldPropsType, { strict: false });
+LabelField.propTypes = propTypes(LabelFieldPropsType, { strict: false });
 LabelField.displayName = "LabelField";
 LabelField.defaultProps = {
 	htmlProps: {},

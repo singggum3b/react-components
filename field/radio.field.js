@@ -2,8 +2,8 @@ import { propTypes } from "tcomb-react";
 
 export type CheckboxFieldPropsType = {
 	name: string,
-	value: [{[key:string] : any}],
-	activeValue: Array<string>,
+	value?: string,
+	optionList: Array<{key: string, value: string}>,
 	label?: string,
 	validated?: boolean,
 	edited?: boolean,
@@ -13,24 +13,23 @@ export type CheckboxFieldPropsType = {
 }
 
 const renderField = (props) => {
-	return props.value.map((item) => {
+	return props.optionList.map((item) => {
 		const newHtmlProps = Object.assign({}, props.htmlProps, item.htmlProps);
 		return (
-			<label className="radio-item" key={item.value}>
+			<label className="radio-item" key={item.key}>
 				<input
 					type="radio"
 					name={props.name}
 					value={item.value}
 					onChange={props.onChange}
-					checked={props.activeValue.includes(item.value)}
-					{...newHtmlProps}
-				/>
-				<span className="item-label">
+					checked={props.value === item.value}
+					{...newHtmlProps} />
+				<span className="field-item-label">
 					{item.label}
 				</span>
 			</label>
 		);
-	})
+	});
 };
 
 export default function CheckboxField(props) {
@@ -44,11 +43,11 @@ export default function CheckboxField(props) {
 	);
 }
 
-CheckboxField.propsType = propTypes(CheckboxFieldPropsType, { strict: false });
+CheckboxField.propTypes = propTypes(CheckboxFieldPropsType, { strict: false });
 CheckboxField.displayName = "CheckboxField";
 CheckboxField.defaultProps = {
 	validated: true,
 	edited: false,
 	activeValue: [],
-	htmlProps: {}
+	htmlProps: {},
 };
