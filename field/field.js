@@ -57,11 +57,9 @@ export default class Field extends React.Component {
 		}
 
 		if ((!props.value && props.value !== "") && (!props.defaultValue && props.defaultValue !== "")) {
-			throw new Error(`Field name [${props.name}] must have one of value or defaultValue set`);
+			if (props.type !== "file")
+				throw new Error(`Field name [${props.name}] must have one of value or defaultValue set`);
 		}
-
-		if (props.value) console.info(`Field name [${props.name}] in controlled mode`);
-		if (props.defaultValue || props.defaultValue === "") console.info(`Field name [${props.name}] in uncontrolled mode`);
 	}
 
 	constructor(props) {
@@ -72,6 +70,13 @@ export default class Field extends React.Component {
 			activeValue: props.defaultValue || props.value || "",
 			// validated: !(this.props.validation && (this.props.validation.size > 0)) || (!this.props.required && !(this.props.value && this.props.value.length)),
 			edited: false,
+			isControlled: props.value || typeof props.value === "string",
+		};
+
+		if (this.state.isControlled) {
+			console.info(`Field name [${props.name}] in controlled mode`);
+		} else {
+			console.info(`Field name [${props.name}] in uncontrolled mode`);
 		}
 	}
 
@@ -137,10 +142,11 @@ export default class Field extends React.Component {
 			return e.target.value;
 		});
 
-
-		this.setState({
-			activeValue: _activeValue,
-		});
+		if (!this.state.isControlled) {
+			this.setState({
+				activeValue: _activeValue,
+			});
+		}
 	};
 
 	onKeyUp = (e) => {
