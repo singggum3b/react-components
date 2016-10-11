@@ -19,7 +19,7 @@ export type DropdownPropsType = {
 
 @p(DropdownPropsType, {strict: false})
 export default class Dropdown extends React.Component {
-	static displayName = "Dropdown";
+	static displayName = "g-dropdown";
 
 	static defaultProps = {};
 
@@ -74,7 +74,7 @@ export default class Dropdown extends React.Component {
 	}
 
 	buildComponent(props, state) {
-		const cls = classNames("g-dropdown", {
+		const cls = classNames(Dropdown.displayName, {
 			[props.className]: !!props.className,
 		});
 		const activePart = state.expanded ? ["head", "body"] : ["head"];
@@ -83,8 +83,7 @@ export default class Dropdown extends React.Component {
 			<Multipart
 				className={cls}
 				activePart={activePart}
-				partMap={this.buildPartMap(props, state)}
-			/>
+				partMap={this.buildPartMap(props, state)} />
 		);
 	}
 

@@ -22,16 +22,14 @@ export default function TextField(props) {
 			value={props.activeValue}
 			onChange={props.onChange}
 			onKeyUp={props.onKeyUp}
-			{...props.htmlProps}
-		/>
+			{...props.htmlProps} />
 	) : (
 		<textarea
 			name={props.name}
 			value={props.activeValue}
-		  	onChange={props.onChange}
+			onChange={props.onChange}
 			onKeyUp={props.onKeyUp}
-			{...props.htmlProps}
-		/>
+			{...props.htmlProps} />
 	);
 
 	return (
@@ -45,7 +43,7 @@ export default function TextField(props) {
 TextField.propTypes = propTypes(TextFieldPropsType, { strict: false });
 TextField.displayName = "TextField";
 TextField.defaultProps = {
-	activeValue: '',
+	activeValue: "",
 	validated: true,
 	edited: false,
 	textarea: false,
