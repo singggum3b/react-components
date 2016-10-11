@@ -17,6 +17,7 @@ export type FormPropsType = {
 	onDismiss?: Function,
 	buildFormActions?: Function,
 	isLoading?: boolean,
+	validator?: Function,
 }
 
 @p(FormPropsType)
@@ -28,11 +29,32 @@ export default class Form extends React.Component {
 		super(props);
 	}
 
-	onFieldKeyup() {
+	serialize() {
+		// TODO: Return serialize data from child field.
+	}
+
+	validate() {
+		/* TODO:
+			1. Get form serialized data
+			2. Pass it to validator and get back errorMsg object
+			3. Update state with new errorMsg object
+		*/
 
 	}
 
-	onFieldChange() {
+	onSubmit() {
+
+	}
+
+	onDismiss() {
+
+	}
+
+	reset() {
+
+	}
+
+	forceValidate() {
 
 	}
 

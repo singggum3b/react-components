@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { props as p } from "tcomb-react";
+import { props as p, ReactElement } from "tcomb-react";
 import { match } from "toolbelt";
 import LabelField from "./label.field";
 import TextField from "./text.field";
@@ -16,9 +16,11 @@ export type FieldPropsType = {
 	name: string,
 	className?: string,
 	label?: string,
-	validation?: {[key:string]: any},
-	required?: boolean,
 	disabled?: boolean,
+	// a field can be in combination of state: [validated, un-validated] x [edited, unedited]
+	validated?: boolean,
+	errorMsg?: string | ReactElement,
+	// =====================
 	multipleChoice?: boolean,
 	validateOnMount?: boolean,
 	onChange?: Function,
@@ -36,7 +38,6 @@ export default class Field extends React.Component {
 	static displayName = "Field";
 
 	static defaultProps = {
-		required: false,
 		disabled: false,
 		tabIndex: "0",
 		multipleChoice: false,
@@ -45,7 +46,7 @@ export default class Field extends React.Component {
 	};
 
 	static errorCheck(props) {
-		[].some((type) => {
+		["select", "radio", "checkbox"].some((type) => {
 			if (type === props.type && !props.optionList) {
 				throw new Error(`Field type [${type}] require optionList`);
 			}
@@ -68,7 +69,6 @@ export default class Field extends React.Component {
 		this.state = {
 			// if props.value is array
 			activeValue: props.defaultValue || props.value || "",
-			// validated: !(this.props.validation && (this.props.validation.size > 0)) || (!this.props.required && !(this.props.value && this.props.value.length)),
 			edited: false,
 			isControlled: props.value || typeof props.value === "string",
 		};

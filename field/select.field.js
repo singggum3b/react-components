@@ -10,6 +10,7 @@ export type SelectFieldPropsType = {
 	validated?: boolean,
 	edited?: boolean,
 	onChange?: Function,
+	disabled?: boolean,
 	className?: string,
 	optionList: Array<{key: string, value: string}>,
 	multiple: boolean,
