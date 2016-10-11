@@ -15,7 +15,7 @@ var Form = React.createClass({
 		buildLayout: React.PropTypes.func,
 		buildFormActions: React.PropTypes.func,
 		alert: React.PropTypes.object,
-		isLoading: React.PropTypes.bool
+		isLoading: React.PropTypes.bool,
 	},
 	statics: {
 

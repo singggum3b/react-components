@@ -26,7 +26,7 @@ export default function ProgressBar(props) {
 	);
 }
 
-ProgressBar.propsType = propTypes(ProgressBarPropsType, { strict: false });
+ProgressBar.propTypes = propTypes(ProgressBarPropsType, { strict: false });
 ProgressBar.displayName = "ProgressBar";
 ProgressBar.defaultProps = {
 	percent: "0",

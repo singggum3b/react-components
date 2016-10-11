@@ -19,7 +19,7 @@ import "./dropdown-list.styl";
  */
 
 export type DropdownListPropsType = {
-	itemClass: Function, // type of item
+	itemClass: Function | string, // type of item
 	itemList: Array<{key: string}>,
 	className?: string,
 	expanded?: boolean,
@@ -91,6 +91,7 @@ export default class DropdownList extends React.Component {
 		return (
 			<ItemClass
 				{...itemProps}
+				id={itemProps.key}
 				className={cls}
 				onClick={this.onClickItem(itemProps, this.state.activeKey)} />
 		);
@@ -110,6 +111,7 @@ export default class DropdownList extends React.Component {
 		return (
 			<ItemClass
 				{...itemProps}
+				id={itemProps.key}
 				className={cls}
 				onClick={this.onClickItem(itemProps, this.state.activeKey)} />
 		);
@@ -132,8 +134,7 @@ export default class DropdownList extends React.Component {
 				className={cls}
 				buildHead={this.buildHead}
 				buildBody={this.buildBody}
-				expanded={state.expanded}
-			/>
+				expanded={state.expanded} />
 		);
 	}
 
