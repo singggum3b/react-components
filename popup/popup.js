@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import {props as p, ReactChildren} from "tcomb-react";
-const Button = require("../button/button");
+
+import Button from "../button/button";
 
 export type PopupPropsType = {
 	onClose?: Function,
@@ -14,12 +15,12 @@ export type PopupPropsType = {
 @p(PopupPropsType,{strict: false})
 export default class Popup extends React.Component {
 
-	static displayName = "Popup";
+	static displayName = "g-popup";
 
 	static defaultProps = {
 		isTouchDevice: false,
-		closeIcon: require("./close.svg"),
-		closeIconHover: require("./close_active.svg"),
+		closeIcon: require("./close.svg"), // eslint-disable-line global-require
+		closeIconHover: require("./close_active.svg"), // eslint-disable-line global-require
 	};
 
 	componentDidMount() {
@@ -36,44 +37,46 @@ export default class Popup extends React.Component {
 	};
 
 	fixBody = () => {
-		const html = document.querySelector("html");
-		const body = document.querySelector("body");
+		const html = window.document.querySelector("html");
+		const body = window.document.querySelector("body");
 		Object.assign(html.style, {
 			height: "100%",
 			overflow: "hidden",
 		});
 
 		if (this.props.isTouchDevice) {
-			this._lastScrollTop = body.scrollTop;
-			setTimeout(function () {
+			this.lastScrollTop = body.scrollTop;
+			setTimeout(() => {
 				html.className += " no-scroll";
-			},250);
+			}, 250);
 		}
 	}
 
 	unFixBody = () => {
-		const html = document.querySelector("html");
-		const body = document.querySelector("body");
+		const html = window.document.querySelector("html");
+		const body = window.document.querySelector("body");
 		Object.assign(html.style, {
 			height: "",
 			overflow: "",
 		});
 		html.className = html.className.replace(/\bno-scroll\b/,"");
-		body.scrollTop = this._lastScrollTop;
+		body.scrollTop = this.lastScrollTop;
 	}
 
 	buildComponent() {
-		const _className = classNames({
+		const cls = classNames(Popup.displayName, {
 			[this.props.className]: !!this.props.className,
-			"b-popup": true,
 		});
 
 		return (
-			<div className={_className}>
-				<Button title="Close" className="close"
-								mode="image" icon={this.props.closeIcon}
-								iconHover={this.props.closeIconHover} onClick={this.onClose}
-				/>
+			<div className={cls}>
+				<Button
+					title="Close"
+					className="close"
+					mode="image"
+					icon={this.props.closeIcon}
+					iconHover={this.props.closeIconHover}
+					onClick={this.onClose} />
 				{this.props.children}
 			</div>
 		);

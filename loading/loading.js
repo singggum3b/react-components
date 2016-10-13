@@ -9,26 +9,25 @@ export type LoadingPropsType = {
 }
 
 export default function Loading(props) {
-	let _className = classNames({
-		"b-loading": true,
+	const cls = classNames(Loading.displayName, {
 		[props.className]: props.className,
-		"b-loading--page": props.isFullPage
+		"b-loading--page": props.isFullPage,
 	});
 	return (
-		<div className={_className}>
+		<div className={cls}>
 			<div className="wrapper">
-				{props.loadingImage && <img src={props.loadingImage} alt="Preloader"/>}
+				{props.loadingImage && <img src={props.loadingImage} alt="Preloader" />}
 				<p>
 					{props.title}
 				</p>
 			</div>
 		</div>
-	)
+	);
 }
 
 Loading.propTypes = propTypes(LoadingPropsType, { strict: false });
-Loading.displayName = "Loading";
+Loading.displayName = "g-loading";
 Loading.defaultProps = {
-	title: "Loading.."
+	title: "Loading..",
 };
 

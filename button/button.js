@@ -31,13 +31,13 @@ export type ButtonPropsType = {
 
 @p(ButtonPropsType, {strict: false})
 export default class Button extends React.Component {
-	static displayName = "Button";
+	static displayName = "g-button";
 
 	static defaultProps = {
 		mode: "text",
 		disabled: false,
 		tabIndex: 0,
-		subtitle: '',
+		subtitle: "",
 	}
 
 	constructor(props) {
@@ -46,8 +46,7 @@ export default class Button extends React.Component {
 			active: !!props.active,
 			hovering: false,
 		};
-		if (props.href && props.onClick)
-			throw new Error("Button cannot have both href and onClick props");
+		if (props.href && props.onClick) throw new Error("Button cannot have both href and onClick props");
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -75,27 +74,30 @@ export default class Button extends React.Component {
 	}
 
 	buildButton(props, state) {
-
-		const icon = (state.active && props.iconActive) ? props.iconActive :
-					 ((state.hovering && props.iconHover) ? props.iconHover : props.icon);
+		let icon = props.icon;
+		if (state.active && props.iconActive) {
+			icon = props.iconActive;
+		} else if (state.hovering && props.iconHover) {
+			icon = props.iconHover;
+		}
 
 		return match(props.mode, {
-			"text": () => {
+			text: () => {
 				return (
 					<span className="label-wrapper">
 						<span className="label">{props.title}</span>
 						{!!props.subtitle && <span className="sub-label">{props.subtitle}</span>}
 					</span>
-				)
+				);
 			},
-			"icon": () => {
+			icon: () => {
 				return (
 					<span className="icon-wrapper">
 						<img className="icon" src={icon} alt="Icon" />
 					</span>
-				)
+				);
 			},
-			"both": () => {
+			both: () => {
 				return [
 					<span key="icon-wrapper" className="icon-wrapper">
 						<img className="icon" src={props.icon} alt="Icon" />
@@ -103,25 +105,24 @@ export default class Button extends React.Component {
 					<span key="label-wrapper" className="label-wrapper">
 						<span className="label">{props.title}</span>
 						{!!props.subtitle && <span className="sub-label">{props.subtitle}</span>}
-					</span>
-				]
-			}
-		})
+					</span>,
+				];
+			},
+		});
 	}
 
 	buildComponent(props, state) {
-		const _buttonClasses = classNames({
-			"g-button": true,
+		const btnClasses = classNames(Button.displayName, {
 			"g-button--link": !!props.href,
 			"g-button--icon": !!props.icon,
-			"active": state.active,
-			"hovering": state.hovering,
-			"disabled": props.disabled,
+			active: state.active,
+			hovering: state.hovering,
+			disabled: props.disabled,
 			[props.className]: !!props.className,
 		});
 
 		const newProps = {
-			className: _buttonClasses,
+			className: btnClasses,
 			href: props.href,
 			target: props.target,
 			title: props.title,

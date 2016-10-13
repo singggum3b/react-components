@@ -68,15 +68,18 @@ export default class SelectField extends React.Component {
 		});
 
 		return (
-			<label htmlFor={this.props.key}
-						 className={cls}
-						 key={itemProps.value}
-						 onMouseEnter={this.onMouseEnter}
-						 onMouseLeave={this.onMouseLeave} >
-				<input id={this.props.key} name={this.props.name}
-							 checked={this.props.value.includes(itemProps.value)}
-							 type="checkbox" value={itemProps.key}
-							 onChange={this.onChange} className="checkbox" />
+			<label
+				className={cls}
+				key={itemProps.value}
+				onMouseEnter={this.onMouseEnter}
+				onMouseLeave={this.onMouseLeave} >
+				<input
+					name={this.props.name}
+					checked={this.props.value.includes(itemProps.value)}
+					type="checkbox"
+					value={itemProps.key}
+					onChange={this.onChange}
+					className="checkbox" />
 				{itemProps.label}
 			</label>
 		);

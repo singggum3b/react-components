@@ -9,26 +9,25 @@ export type ProgressBarPropsType = {
 }
 
 export default function ProgressBar(props) {
-	let className = classNames({
-		"g-progress-bar": true,
-		[props.className]: props.className
+	const className = classNames(ProgressBar.displayName, {
+		[props.className]: props.className,
 	});
-	let transitionDuration = props.transitionDuration ? `${props.transitionDuration / 1000}s` : `0s`;
-	let style = {
-		"width": ((props.percent >= 100) ? 100 : props.percent) + "%",
-		"transitionDuration": transitionDuration,
-		"WebkitTransitionDuration": transitionDuration,
+	const transitionDuration = props.transitionDuration ? `${props.transitionDuration / 1000}s` : "0s";
+	const style = {
+		width: (props.percent >= 100) ? "100%" : `${props.percent}%`,
+		transitionDuration,
+		WebkitTransitionDuration: transitionDuration,
 	};
 	return (
 		<div className={className}>
-			<div className="bar" style={style}></div>
+			<div className="bar" style={style} />
 		</div>
 	);
 }
 
 ProgressBar.propTypes = propTypes(ProgressBarPropsType, { strict: false });
-ProgressBar.displayName = "ProgressBar";
+ProgressBar.displayName = "g-progress-bar";
 ProgressBar.defaultProps = {
-	percent: "0",
-	transitionDuration: "2000",
+	percent: 0,
+	transitionDuration: 2000,
 };

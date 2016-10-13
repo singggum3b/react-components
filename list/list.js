@@ -30,7 +30,7 @@ export default function List(props) {
 				})
 			}
 		</div>
-	)
+	);
 }
 List.propTypes = propTypes(ListPropsType, { strict: false });
 List.displayName = "g-list";

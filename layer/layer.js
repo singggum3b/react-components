@@ -12,22 +12,6 @@ export type LayerPropsType = {
 	allowTouchMove?: boolean,
 }
 
-export default function Layer(props) {
-	const { parent } = props;
-	const _className = classNames({
-		[Layer.displayName]: true,
-		"g-layer--parent": !!parent,
-		[props.className]: !!props.className
-	});
-
-	return (
-		<div className={_className} onWheel={onWheel(props)} onClick={onClick(props)}
-			 onTouchMove={onTouchMove}>
-			{props.children}
-		</div>
-	);
-}
-
 const onWheel = (props) => (e) => {
 	props.onWheel && props.onWheel(e);
 };
@@ -38,15 +22,33 @@ const onClick = (props) => (e) => {
 	}
 };
 
-function onTouchMove(e) {
+const onTouchMove = (props) => (e) => {
 	if (!props.allowTouchMove) {
 		e.preventDefault();
 		e.stopPropagation();
 	}
 };
 
+export default function Layer(props) {
+	const { parent } = props;
+	const cls = classNames(Layer.displayName, {
+		"g-layer--parent": !!parent,
+		[props.className]: !!props.className,
+	});
+
+	return (
+		<div
+			className={cls}
+			onWheel={onWheel(props)}
+			onClick={onClick(props)}
+			onTouchMove={onTouchMove(props)}>
+			{props.children}
+		</div>
+	);
+}
+
 Layer.propTypes = propTypes(LayerPropsType, { strict: false });
 Layer.displayName = "g-layer";
 Layer.defaultProps = {
-	allowTouchMove: false
+	allowTouchMove: false,
 }
