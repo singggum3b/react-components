@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import { propTypes } from "tcomb-react";
 
 export type FileFieldPropsType = {
@@ -17,8 +16,9 @@ export default class FileField extends React.Component {
 		super(props);
 		this.state = {
 			fileInputKey: Date.now(), // reset field after submitting
-		}
+		};
 	}
+
 	clearInput = () => {
 		this.props.onChange({
 			target: { files: undefined }, // simulate event
@@ -33,9 +33,9 @@ export default class FileField extends React.Component {
 	buildComponent(props, state) {
 		return (
 			<label className={props.className}>
-			<span className="field-label">
-				{props.label}
-			</span>
+				<span className="field-label">
+					{props.label}
+				</span>
 				<input
 					key={state.fileInputKey}
 					type="file"
