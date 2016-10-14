@@ -102,8 +102,8 @@ export default class Field extends React.Component {
 		}
 	}
 
-	getValue(props, activeValue) {
-		return props.formatter ? props.formatter(activeValue) : activeValue;
+	getValue() {
+		return this.props.formatter ? this.props.formatter(this.state.activeValue) : this.state.activeValue;
 	}
 
 	validate(props, state) {
