@@ -20,6 +20,12 @@ export type FormPropsType = {
 	validator?: Function,
 }
 
+export type ErrorObject = {
+	[fieldName: string]: {
+		message: string
+	}
+}
+
 @p(FormPropsType)
 export default class Form extends React.Component {
 
@@ -27,19 +33,81 @@ export default class Form extends React.Component {
 
 	constructor(props) {
 		super(props);
+		this.state = {};
 	}
 
-	serialize() {
+	getSerializedValue() {
 		// TODO: Return serialize data from child field.
+		const fieldInstanceMap = this.fieldInstanceMap;
+		return new Promise((resolve, reject) => {
+			const resultPromiseList = Object.keys(fieldInstanceMap).map((fieldName) => {
+				let fieldValue = fieldInstanceMap[fieldName].getValue();
+				if (fieldValue.then) {
+					return fieldValue.then((result) => {
+						return Promise.resolve({
+							fieldName,
+							value: result,
+						});
+					});
+				} else {
+					return Promise.resolve({
+						fieldName,
+						value: fieldValue,
+					})
+				}
+			});
+			return Promise.all(resultPromiseList).then((result) => {
+				resolve(result);
+			}, () => {
+				reject();
+			});
+		});
 	}
 
-	validate() {
-		/* TODO:
-			1. Get form serialized data
-			2. Pass it to validator and get back errorMsg object
-			3. Update state with new errorMsg object
-		*/
-
+	validate = () => {
+		const serializedDataPromise = this.getSerializedValue();
+		serializedDataPromise.then(
+			(serializedData) => {
+				const formData = serializedData.reduce((result, fieldData) => {
+					return Object.assign(result, {
+						[fieldData.fieldName]: fieldData.value,
+					})
+				},{});
+				const errorObject = this.props.validator(formData);
+				if (!errorObject) {
+					// No error object , form is valid
+					this.setState({
+						errorObject: undefined,
+						validated: true,
+					});
+				} else if (errorObject.then) {
+					// Validator return a promise
+					errorObject.then((result) => {
+						// The promise resolve , form is valid
+						this.setState({
+							errorObject: undefined,
+							validated: true,
+						});
+					}, (err) => {
+						// The promise reject with an errorObject , form is invalid
+						this.setState({
+							errorObject: err,
+						});
+					})
+				} else {
+					// Form is invalid
+					this.setState({
+						errorObject,
+					});
+				}
+			},
+			(err) => {
+				this.setState({
+					validated: false,
+				});
+				console.error(err);
+				throw new Error("There were error when trying to serialize field data");
+			});
 	}
 
 	onSubmit() {
@@ -58,8 +126,18 @@ export default class Form extends React.Component {
 
 	}
 
+	addFieldRef = (name) => {
+		return (fieldInstance) => {
+			this.fieldInstanceMap = Object.assign(
+				{}, this.fieldInstanceMap, {
+					[name]: fieldInstance,
+				})
+		}
+	};
+
 	buildFields(props, state) {
-		const { fieldList, formLayout } = props;
+		const {errorObject} = state;
+		const {fieldList, formLayout} = props;
 		const groupedFields = groupByIndexArray(fieldList, formLayout || [fieldList.length]);
 
 		return groupedFields.map((fieldGroup, index) => {
@@ -67,12 +145,16 @@ export default class Form extends React.Component {
 				<fieldset className={"fieldset-"+index} key={"fieldset-"+index}>
 					{
 						fieldGroup.map((field) => {
+
+							const error = errorObject ? errorObject[field.name] : undefined;
+
 							return (
 								<Field key={"field" + field.name}
-											 ref={"field" + field.name}
+											 errorMsg={error && error.message}
+											 ref={this.addFieldRef(field.name)}
 											 onKeyUp={this.onFieldKeyup}
 											 onChange={this.onFieldChange}
-											 {...field} />
+									{...field} />
 							);
 						})
 					}
@@ -82,7 +164,12 @@ export default class Form extends React.Component {
 	}
 
 	buildFormActions(formInstance) {
-
+		return this.props.buildFormActions ?
+			this.props.buildFormActions(formInstance)
+			:
+			[
+				<button key="validate-btn" onClick={formInstance.validate}>Validate Form</button>
+			]
 	}
 
 	buildComponent(props, state) {
@@ -98,9 +185,9 @@ export default class Form extends React.Component {
 				<form onSubmit={(e) => { e.preventDefault(); }}>
 					{props.fieldList ? this.buildFields(props, state) : null}
 				</form>
-				{/*<div className="actions">
-					{props.buildFormActions(this)}
-				</div>*/}
+				<div className="actions">
+					{this.buildFormActions(this)}
+				</div>
 			</div>
 		);
 	}
