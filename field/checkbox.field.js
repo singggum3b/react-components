@@ -1,9 +1,10 @@
-import { propTypes } from "tcomb-react";
+import { propTypes, ReactElement } from "tcomb-react";
 
 export type CheckboxFieldPropsType = {
 	name: string,
 	value: Array<string>,
 	optionList: Array<{key: string, value: string}>,
+	errorMsg?: string | ReactElement,
 	label?: string,
 	validated?: boolean,
 	edited?: boolean,
@@ -40,6 +41,9 @@ export default function CheckboxField(props) {
 				{props.label}
 			</span>
 			{renderField(props)}
+			<span className="error-message">
+				{props.errorMsg}
+			</span>
 		</div>
 	);
 }

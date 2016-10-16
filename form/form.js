@@ -2,6 +2,7 @@ import classNames from "classnames";
 import {match} from "toolbelt";
 import {props as p} from "tcomb-react";
 import Field from "../field/field";
+import "./form.styl";
 
 export type FormStatusType = {
 	code: "SUCCESS" | "FAILED" | "LOADING",
@@ -17,6 +18,10 @@ export type FormPropsType = {
 	onDismiss?: Function,
 	buildFormActions?: Function,
 	isLoading?: boolean,
+	/**
+	 * Validator is a function which either return null, an errorObjects or a Promise,
+	 * which resolve when valid and reject when invalid
+     */
 	validator?: Function,
 }
 
@@ -33,16 +38,18 @@ export default class Form extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			validated: false
+		};
 	}
 
 	getSerializedValue() {
-		// TODO: Return serialize data from child field.
 		const fieldInstanceMap = this.fieldInstanceMap;
 		return new Promise((resolve, reject) => {
 			const resultPromiseList = Object.keys(fieldInstanceMap).map((fieldName) => {
 				let fieldValue = fieldInstanceMap[fieldName].getValue();
 				if (fieldValue.then) {
+					// Field getValue return promise
 					return fieldValue.then((result) => {
 						return Promise.resolve({
 							fieldName,
@@ -50,6 +57,7 @@ export default class Form extends React.Component {
 						});
 					});
 				} else {
+					// Field getValue return value
 					return Promise.resolve({
 						fieldName,
 						value: fieldValue,
@@ -64,42 +72,63 @@ export default class Form extends React.Component {
 		});
 	}
 
+	setFieldAsEdited = () => {
+		const fieldInstanceMap = this.fieldInstanceMap;
+		Object.keys(fieldInstanceMap).map((fieldName) => {
+			return fieldInstanceMap[fieldName].setEditedState(true);
+		})
+	};
+
 	validate = () => {
+
+		this.setFieldAsEdited();
 		const serializedDataPromise = this.getSerializedValue();
-		serializedDataPromise.then(
+
+		return serializedDataPromise.then(
 			(serializedData) => {
+
 				const formData = serializedData.reduce((result, fieldData) => {
 					return Object.assign(result, {
 						[fieldData.fieldName]: fieldData.value,
 					})
 				},{});
+
 				const errorObject = this.props.validator(formData);
+
 				if (!errorObject) {
 					// No error object , form is valid
 					this.setState({
 						errorObject: undefined,
 						validated: true,
 					});
+					return Promise.resolve(formData);
+
 				} else if (errorObject.then) {
 					// Validator return a promise
-					errorObject.then((result) => {
+					return errorObject.then(() => {
 						// The promise resolve , form is valid
 						this.setState({
 							errorObject: undefined,
 							validated: true,
 						});
+						return Promise.resolve(formData);
 					}, (err) => {
 						// The promise reject with an errorObject , form is invalid
 						this.setState({
 							errorObject: err,
+							validated: true,
 						});
+						return Promise.reject(err);
 					})
 				} else {
 					// Form is invalid
 					this.setState({
 						errorObject,
+						validated: true,
 					});
+					return Promise.reject(errorObject);
 				}
+
 			},
 			(err) => {
 				this.setState({
@@ -147,10 +176,10 @@ export default class Form extends React.Component {
 						fieldGroup.map((field) => {
 
 							const error = errorObject ? errorObject[field.name] : undefined;
-
 							return (
 								<Field key={"field" + field.name}
-											 errorMsg={error && error.message}
+											 validated={state.validated}
+											 errorMsg={error}
 											 ref={this.addFieldRef(field.name)}
 											 onKeyUp={this.onFieldKeyup}
 											 onChange={this.onFieldChange}

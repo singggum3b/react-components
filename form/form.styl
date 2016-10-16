@@ -1,0 +1,17 @@
+@require "kouto-swiss"
+@require "global"
+
+.g-form
+	fieldset
+		border: 0
+		padding: 0
+		margin: 0
+
+	.g-field
+		display: block
+
+		& + .g-field
+			margin-top: $layout.margin
+
+	.actions
+		margin-top: 2 * $layout.margin

@@ -11,7 +11,7 @@ export type LoadingPropsType = {
 export default function Loading(props) {
 	const cls = classNames(Loading.displayName, {
 		[props.className]: props.className,
-		"b-loading--page": props.isFullPage,
+		"g-loading--page": props.isFullPage,
 	});
 	return (
 		<div className={cls}>

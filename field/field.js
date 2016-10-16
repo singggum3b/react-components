@@ -7,6 +7,7 @@ import CheckboxField from "./checkbox.field";
 import RadioField from "./radio.field";
 import FileField from "./file.field";
 import SelectField from "./select.field";
+import "./field.styl";
 
 export type FieldPropsType = {
 	type: "text" | "radio" | "date" | "select" | "textarea" | "label" | "checkbox" | "ckeditor" | "file",
@@ -71,6 +72,7 @@ export default class Field extends React.Component {
 			activeValue: props.defaultValue || props.value || "",
 			edited: false,
 			isControlled: props.value || typeof props.value === "string",
+			validated: props.validated,
 		};
 
 		if (this.state.isControlled) {
@@ -85,7 +87,10 @@ export default class Field extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-
+		if (nextProps.validated !== this.state.validated)
+			this.setState({
+				validated: nextProps.validated,
+			});
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -96,7 +101,6 @@ export default class Field extends React.Component {
 				this.props.id,
 				this.state.activeValue,
 				formattedValue,
-				this.state.validated,
 				this.state.edited
 			);
 		}
@@ -106,11 +110,16 @@ export default class Field extends React.Component {
 		return this.props.formatter ? this.props.formatter(this.state.activeValue) : this.state.activeValue;
 	}
 
-	validate(props, state) {
-
+	setEditedState(isEdited) {
+		this.setState({
+			edited: isEdited,
+		})
 	}
 
 	onChange = (e) => {
+		this.setState({
+			validated: false,
+		})
 		const {activeValue} = this.state;
 		const newValue = e.target.value;
 		const _activeValue = match(this.props.type, {
@@ -145,6 +154,7 @@ export default class Field extends React.Component {
 		if (!this.state.isControlled) {
 			this.setState({
 				activeValue: _activeValue,
+				edited: true,
 			});
 		}
 	};
@@ -158,8 +168,8 @@ export default class Field extends React.Component {
 			"g-field": true,
 			"is-required": !!props.htmlProps.required,
 			"is-disabled": !!props.htmlProps.disabled,
-			"is-invalid": !props.validated,
-			"is-edited": props.edited,
+			"is-invalid": state.validated && props.errorMsg,
+			"is-edited": state.edited,
 			["g-field-"+props.type]: !!props.type,
 			[props.className]: !!props.className,
 		});
@@ -170,6 +180,7 @@ export default class Field extends React.Component {
 			value: state.activeValue,
 			edited: state.edited,
 			className: _className,
+			errorMsg: state.validated ? props.errorMsg : undefined,
 		});
 
 		return match(props.type, {
@@ -195,7 +206,7 @@ export default class Field extends React.Component {
 				return <FileField {...newProps} />
 			},
 		}, () => {
-			return <LabelField label="[Unsupported field type]" />
+			return <LabelField label="[Unsupported field type]" />;
 		});
 	}
 
