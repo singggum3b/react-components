@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { props as p } from "tcomb-react";
+import { props as p, ReactElement } from "tcomb-react";
 import DropdownList from "../dropdown-list/dropdown-list";
 import List from "../list/list";
 import "./select.field.styl";
@@ -8,6 +8,7 @@ export type SelectFieldPropsType = {
 	name?: string,
 	label?: string,
 	validated?: boolean,
+	errorMsg?: string | ReactElement,
 	edited?: boolean,
 	onChange?: Function,
 	className?: string,
@@ -119,7 +120,6 @@ export default class SelectField extends React.Component {
 		return (
 			<DropdownList
 				name={props.name}
-				className={props.className}
 				activeKey={activeKey}
 				onClickItem={this.onClickSingleSelectItem}
 				itemClass={this.buildRadioItem}
@@ -137,6 +137,7 @@ export default class SelectField extends React.Component {
 			<div className={cls}>
 				<span className="field-label">{props.label}</span>
 				{field}
+				<span className="error-message">{props.errorMsg}</span>
 			</div>
 
 		);

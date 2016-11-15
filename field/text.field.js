@@ -1,11 +1,13 @@
-import { propTypes } from "tcomb-react";
+import { propTypes, ReactElement } from "tcomb-react";
+import "./text.field.styl";
 
 export type TextFieldPropsType = {
 	type: string,
 	name: string,
-	activeValue?: string,
+	value: string,
 	label?: string,
 	validated?: boolean,
+	errorMsg?: string | ReactElement,
 	edited?: boolean,
 	textarea?: boolean,
 	onKeyUp?: Function,
@@ -19,14 +21,14 @@ export default function TextField(props) {
 		<input
 			type={props.htmlProps.type ? props.htmlProps.type : "text"}
 			name={props.name}
-			value={props.activeValue}
+			value={props.value}
 			onChange={props.onChange}
 			onKeyUp={props.onKeyUp}
 			{...props.htmlProps} />
 	) : (
 		<textarea
 			name={props.name}
-			value={props.activeValue}
+			value={props.value}
 			onChange={props.onChange}
 			onKeyUp={props.onKeyUp}
 			{...props.htmlProps} />
@@ -34,8 +36,9 @@ export default function TextField(props) {
 
 	return (
 		<label className={props.className}>
-			{props.label}
+			<span className="field-label">{props.label}</span>
 			{field}
+			<span className="error-message">{props.errorMsg}</span>
 		</label>
 	);
 }
