@@ -98,7 +98,7 @@ export default class Field extends React.Component {
 		if (prevState.activeValue !== this.state.activeValue) {
 			const formattedValue = this.getValue(prevProps, this.state.activeValue);
 			this.props.onChange && this.props.onChange(
-				this.props.id,
+				this.props.name,
 				this.state.activeValue,
 				formattedValue,
 				this.state.edited
@@ -176,7 +176,7 @@ export default class Field extends React.Component {
 		const newProps = Object.assign({}, props, {
 			onChange: this.onChange,
 			onKeyUp: this.onKeyUp,
-			validated: state.validated,   // ?????
+			validated: state.validated,
 			value: state.activeValue,
 			edited: state.edited,
 			className: _className,
