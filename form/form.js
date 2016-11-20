@@ -18,6 +18,7 @@ export type FormPropsType = {
 	onDismiss?: Function,
 	buildFormActions?: Function,
 	isLoading?: boolean,
+	onFieldChange?: Function,
 	/**
 	 * Validator is a function which either return null, an errorObjects or a Promise,
 	 * which resolve when valid and reject when invalid
@@ -39,7 +40,7 @@ export default class Form extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			validated: false
+			validated: false,
 		};
 	}
 
@@ -61,7 +62,7 @@ export default class Form extends React.Component {
 					return Promise.resolve({
 						fieldName,
 						value: fieldValue,
-					})
+					});
 				}
 			});
 			return Promise.all(resultPromiseList).then((result) => {
@@ -155,13 +156,17 @@ export default class Form extends React.Component {
 
 	}
 
+	onFieldChange = (...args) => {
+		this.props.onFieldChange && this.props.onFieldChange(...args);
+	}
+
 	addFieldRef = (name) => {
 		return (fieldInstance) => {
 			this.fieldInstanceMap = Object.assign(
 				{}, this.fieldInstanceMap, {
 					[name]: fieldInstance,
-				})
-		}
+				});
+		};
 	};
 
 	buildFields(props, state) {
